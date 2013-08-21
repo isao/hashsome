@@ -1,5 +1,6 @@
-// given a directory path, and a file matching patterns, calculate a checksum
-// for all matched files
+// given a directory path, and some pathname matching patterns, calculate a
+// checksum for all matched files (actually, a checksum of the checksums of
+// every matched file).
 
 var fs = require('fs'),
     crypto = require('crypto'),
@@ -12,32 +13,33 @@ function match(str) {
 }
 
 function metahash(algo, checksums) {
-    var hash = crypto.createHash(algo);
+    var hash = crypto.createHash(algo),
+        files = Object.keys(checksums);
     
     // hash all the hashes
-    checksums.forEach(function (sum) {
-        hash.update(sum);
+    files.forEach(function (file) {
+        hash.update(checksums[file]);
     });
 
     // if there were no checksums, return 0 instead of the hash of nothing. For
     // example, the md5 of nothing hashes to 'd41d8cd98f00b204e9800998ecf8427e'.
-    return checksums.length && hash.digest('hex');
+    return files.length && hash.digest('hex');
 }
 
 function hashdir(dir, opts, cb) {
     var scan = new Scanfs(opts.ignore),
         results = {
             dir: dir,
-            checksum: null,
-            checksums: {},
-            invalid: {}
+            checksum: null, // the hash of hashes of matched files
+            checksums: {},  // file pathname => it's hash
+            invalid: {}     // pathname associated with an error => error code
         },
         count = 1; // track pending async operations; is 0 when scan (after the
                    // 'done' event) and any hashfile operations are done.
 
     function isDone() {
         if (!--count) {
-            results.checksum = metahash(opts.algo, Object.keys(results.checksums));
+            results.checksum = metahash(opts.algo, results.checksums);
             cb(null, results);
         }
     }
@@ -46,7 +48,7 @@ function hashdir(dir, opts, cb) {
         if (err) {
             onErr(err);
         } else {
-            results.checksums[hash] = pathname;
+            results.checksums[pathname] = hash;
         }
         isDone();
     }
@@ -68,6 +70,12 @@ function hashdir(dir, opts, cb) {
     scan.relatively(dir);
 }
 
+/**
+ * Handle optional options and their defaults before calling hashdir()
+ * @param {string} dir Full path of directory to checksum
+ * @param {object} [options]
+ * @param {function} callback(err, results)
+ */
 function main(dir, options, callback) {
     var defaults = {
             algo: 'md5',
