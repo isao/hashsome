@@ -1,0 +1,1 @@
+YUI.add("binder-index",function(e){"use strict";e.Binders={index:{update:function(t,n){var r=e.Template._cache["demo/foo"](n);t.setContent(r)}}}},"@VERSION@",{requires:["node","demo-templates-foo"],affinity:"client"});

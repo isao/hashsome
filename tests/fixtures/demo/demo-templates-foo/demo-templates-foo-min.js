@@ -1,0 +1,1 @@
+YUI.add("demo-templates-foo",function(e,t){var n=e.Template.Micro.revive(function(e,t,n){var r="",i=function(e){return e||e===0?e:r},s="<p>Micro template body content: "+t(i(n.tellme))+"<p>";return s}),r=e.Template._cache=e.Template._cache||{};r["demo/foo"]=function(e){return n(e)}},"@VERSION@",{requires:["template-micro"]});

@@ -1,0 +1,14 @@
+{
+  "name": "hashdir",
+  "version": "0.0.0",
+  "description": "",
+  "main": "hashdir.js",
+  "scripts": {
+    "test": "echo nope && exit 1"
+  },
+  "author": "Isao Yagi <isao@yahoo-inc.com>",
+  "license": "BSD",
+  "dependencies": {
+    "scanfs": "~0.1.1"
+  }
+}
