@@ -57,7 +57,7 @@ function hashdir(dir, opts, cb) {
         results.invalid[err.path] = err.code;
     }
 
-    function onFile(err, pathname) {
+    function onFile(err, pathname, stat) {
         if (opts.select.some(match(pathname))) {
             count++;
             hashfile(pathname, opts.algo, afterHash);
@@ -74,7 +74,16 @@ function hashdir(dir, opts, cb) {
  * Handle optional options and their defaults before calling hashdir()
  * @param {string} dir Full path of directory to checksum
  * @param {object} [options]
+ *   @param {string} [options.algo = 'md5']
+ *   @param {array} [options.select = [/-min\.(css|js)$/, /\.(gif|jpe?g|png|swf)$/, /\/lang\/.+\.js$/]]
+ *   @param {string} [options.ignore = []]
  * @param {function} callback(err, results)
+ *   @param {error} err
+ *   @param {object} results
+ *     @param {string} results.dir
+ *     @param {string} results.checksum hash or '' if nothing was hashed
+ *     @param {object} results.checksums pathname => hash
+ *     @param {object} results.invalid pathname => error code
  */
 function main(dir, options, callback) {
     var defaults = {
