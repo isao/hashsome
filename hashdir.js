@@ -31,8 +31,8 @@ function hashdir(dir, opts, cb) {
         result = {
             dir: dir,
             hash: null, // the hash of hashes of matched files
-            hashes: {},  // file pathname => it's hash
-            invalid: {}     // pathname associated with an error => error code
+            hashes: {}, // file pathname => it's hash
+            invalid: {} // pathname associated with an error => error code
         },
         count = 1; // track pending async operations; is 0 when scan (after the
                    // 'done' event) and any hashfile operations are done.
@@ -71,7 +71,9 @@ function hashdir(dir, opts, cb) {
 }
 
 /**
- * Handle optional options and their defaults before calling hashdir()
+ * Call hashdir() after normalizing the defaults. There are no side-effects.
+ * Calculates the hash for each file in a directory that matches some patterns,
+ * and also determines the hash of these hashes.
  * @param {string} dir Full path of directory to hash
  * @param {object} [options]
  *   @param {string} [options.algo = 'md5']
