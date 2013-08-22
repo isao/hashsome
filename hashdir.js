@@ -28,10 +28,10 @@ function metahash(algo, checksums) {
 
 function hashdir(dir, opts, cb) {
     var scan = new Scanfs(opts.ignore),
-        results = {
+        result = {
             dir: dir,
-            checksum: null, // the hash of hashes of matched files
-            checksums: {},  // file pathname => it's hash
+            hash: null, // the hash of hashes of matched files
+            hashes: {},  // file pathname => it's hash
             invalid: {}     // pathname associated with an error => error code
         },
         count = 1; // track pending async operations; is 0 when scan (after the
@@ -39,8 +39,8 @@ function hashdir(dir, opts, cb) {
 
     function isDone() {
         if (!--count) {
-            results.checksum = metahash(opts.algo, results.checksums);
-            cb(null, results);
+            result.hash = metahash(opts.algo, result.hashes);
+            cb(null, result);
         }
     }
 
@@ -48,13 +48,13 @@ function hashdir(dir, opts, cb) {
         if (err) {
             onErr(err);
         } else {
-            results.checksums[pathname] = hash;
+            result.hashes[pathname] = hash;
         }
         isDone();
     }
 
     function onErr(err) {
-        results.invalid[err.path] = err.code;
+        result.invalid[err.path] = err.code;
     }
 
     function onFile(err, pathname, stat) {
@@ -72,18 +72,18 @@ function hashdir(dir, opts, cb) {
 
 /**
  * Handle optional options and their defaults before calling hashdir()
- * @param {string} dir Full path of directory to checksum
+ * @param {string} dir Full path of directory to hash
  * @param {object} [options]
  *   @param {string} [options.algo = 'md5']
  *   @param {array} [options.select = [/-min\.(css|js)$/, /\.(gif|jpe?g|png|swf)$/, /\/lang\/.+\.js$/]]
  *   @param {string} [options.ignore = []]
- * @param {function} callback(err, results)
+ * @param {function} callback(err, result)
  *   @param {error} err
- *   @param {object} results
- *     @param {string} results.dir
- *     @param {string} results.checksum hash or '' if nothing was hashed
- *     @param {object} results.checksums pathname => hash
- *     @param {object} results.invalid pathname => error code
+ *   @param {object} result
+ *     @param {string} result.dir
+ *     @param {string} result.hash hash or '' if nothing was hashed
+ *     @param {object} result.hashes pathname => hash
+ *     @param {object} result.invalid pathname => error code
  */
 function main(dir, options, callback) {
     var defaults = {

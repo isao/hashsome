@@ -16,23 +16,28 @@ function prefix(left) {
 }
 
 function hashdirs(dirs, opts, cb) {
-    var count = dirs.length;
+    var count = dirs.length,
+        results = {};
 
-    function isDone() {
+    function isDone(err) {
         if (!--count) {
-            cb();
+            cb(err, err ? null : results);
         }
     }
 
     function afterHash(err, result) {
         var moddir = result.dir,
-            newdir = namer(result.dir, result.checksum);
+            modname = path.basename(moddir),
+            newdir = namer(result.dir, result.hash);
+
+        // save
+        results[modname] = newdir;
 
         if (opts.exec) {
-            console.log('rename from %s to %s', moddir, newdir);
+            console.log('module path old %s, new %s', moddir, newdir);
             opts.exec(moddir, newdir, isDone);
         } else {
-            isDone();
+            isDone(err);
         }
     }
 
@@ -69,4 +74,4 @@ function shifter(buildDir, options, callback) {
 module.exports = hashdirs;
 module.exports.shifter = shifter;
 
-//main(__dirname + '/tests/fixtures/demo', console.log);
+//shifter(__dirname + '/tests/fixtures/demo', console.log);
