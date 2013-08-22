@@ -15,15 +15,15 @@ function match(str) {
 function metahash(algo, checksums) {
     var hash = crypto.createHash(algo),
         files = Object.keys(checksums);
-    
+
     // hash all the hashes
     files.forEach(function (file) {
         hash.update(checksums[file]);
     });
 
-    // if there were no checksums, return 0 instead of the hash of nothing. For
+    // if there were no checksums, return '' instead of the hash of nothing. For
     // example, the md5 of nothing hashes to 'd41d8cd98f00b204e9800998ecf8427e'.
-    return files.length && hash.digest('hex');
+    return files.length ? hash.digest('hex') : '';
 }
 
 function hashdir(dir, opts, cb) {
