@@ -4,49 +4,29 @@ var fs = require('fs'),
 
 
 function namer(modulePath, hash) {
-    return modulePath + '@' + hash.slice(0, 6);
+    return modulePath + '@' + hash.slice(0, 6); // new module directory name
 }
 
 function namefilter(item) {
-    return /^[\w\-]+$/.test(item);
+    return (/^[\w\-]+$/).test(item); // match YUI module directory names
 }
 
 function prefix(left) {
     return function(right) { return left + right; };
 }
 
-function hashdirs(dirs, opts, cb) {
+
+/**
+ * Call hashdir.js for each directory path in an array.
+ * @param {array} dirs Array of pathnames to call hashdir on
+ * @param {object} options Options for hashdir.js
+ * @param {function} callback Callback
+ * @see ./hashdir.js
+ */
+function hashdirs(dirs, options, callback) {
     var count = dirs.length,
         results = {};
 
-    function isDone(err) {
-        if (!--count) {
-            cb(err, err ? null : results);
-        }
-    }
-
-    function afterHash(err, result) {
-        var moddir = result.dir,
-            modname = path.basename(moddir),
-            newdir = namer(result.dir, result.hash);
-
-        // save
-        results[modname] = newdir;
-
-        if (opts.exec) {
-            console.log('module path old %s, new %s', moddir, newdir);
-            opts.exec(moddir, newdir, isDone);
-        } else {
-            isDone(err);
-        }
-    }
-
-    dirs.forEach(function (dir) {
-        hashdir(dir, options, afterHash);
-    });
-}
-
-function shifter(buildDir, options, callback) {
     if (!callback) {
         callback = options;
         options = {};
@@ -60,18 +40,58 @@ function shifter(buildDir, options, callback) {
         options.exec = fs.rename;
     }
 
-    fs.readdir(buildDir, function (err, items) {
+    function isDone(err) {
+        if (!--count) {
+            callback(err, err ? null : results);
+        }
+    }
+
+    function afterHash(err, result) {
+        var moddir = result.dir,
+            modname = path.basename(moddir),
+            newdir = namer(result.dir, result.hash);
+
+        // save
+        results[modname] = newdir;
+
+        // rename
+        if (!err && options.exec) {
+            options.exec(moddir, newdir, isDone);
+        } else {
+            isDone(err);
+        }
+    }
+
+    dirs.forEach(function (dir) {
+        hashdir(dir, options, afterHash);
+    });
+}
+
+/**
+ * Call hashdir.js for each item in a shifter build directory (filtering
+ * out item names not matched by namefilter()).
+ * @param {string} buildDir Pathname of Shifter build directory
+ * @param {object} options Options for hashdir.js
+ * @param {function} callback Callback
+ * @see ./hashdir.js
+ */
+function buildDir(blddir, options, callback) {
+    if (!callback) {
+        callback = options;
+        options = {};
+    }
+
+    fs.readdir(blddir, function (err, items) {
         var dirs;
         if (err) {
             callback(err);
         } else {
-            dirs = items.filter(namefilter).map(prefix(buildDir + path.sep));
+            dirs = items.filter(namefilter).map(prefix(blddir + path.sep));
             hashdirs(dirs, options, callback);
         }
     });
 }
 
 module.exports = hashdirs;
-module.exports.shifter = shifter;
+module.exports.buildDir = buildDir;
 
-//shifter(__dirname + '/tests/fixtures/demo', console.log);
