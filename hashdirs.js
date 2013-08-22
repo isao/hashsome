@@ -42,7 +42,7 @@ function hashdirs(dirs, opts, cb) {
     }
 
     dirs.forEach(function (dir) {
-        hashdir(dir, afterHash);
+        hashdir(dir, options, afterHash);
     });
 }
 
