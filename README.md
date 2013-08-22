@@ -1,8 +1,8 @@
 # readme
 
-Get a hash (md5, sha, etc.) for a file, files matching a pattern in a directory, or same for a group of directories.
+Get a hash (md5, sha, etc.) for files matching a pattern in a directory, or for each of a group of directories.
 
-## hashdirs.buildDir(dir, [options], callback)
+## hashsome.buildDir(dir, [options], callback)
 
 For a Shifter build directory path, calculate the hash of each YUI module, and rename the module directory accoringly.
 
@@ -10,10 +10,10 @@ Example:
 
     var hashdirs = require('hashsome')
     hashdirs.buildDir('tests/fixtures/demo', function(err, results) {
-        console.log(expected);
+        console.log(results);
     });
 
-Prints module name and it's new pathname:
+Build sub-directories (module directories) are renamed on the filesystem (by default, as in this example). Results look like:
 
     {
         'alerts-model': 'tests/fixtures/demo/alerts-model@569028',
@@ -38,15 +38,15 @@ Arguments are:
     - `exec` - function for renaming the module directory - default is `fs.rename`.
 - `callback` - function - callback gets two arguments, `err`, `results`.
 
-## hashdirs(dirs, [options], callback)
+## hashsome(dirs, [options], callback)
 
 Same as `hashdirs.buildDir` except first argument is an array of module directories. Each array item will get renamed with a hash.
 
 Example:
 
-    var hashdirs = require('hashsome');
-    hashdirs(['tests/fixtures/demo/smorgasbord', 'tests/fixtures/demo/binder-index'], function(err, results) {
-        console.log(expected);
+    var hashsome = require('hashsome');
+    hashsome(['tests/fixtures/demo/smorgasbord', 'tests/fixtures/demo/binder-index'], function(err, results) {
+        console.log(results);
     });
 
 ## hashdir(dir, options, callback)
@@ -62,7 +62,7 @@ Arguments are:
     - `ignore` - array of string or regex patterns of module pathnames to ignore - default is `[]`
 - `callback` - function - callback gets two arguments, `err`, `results`.
 
-Example
+Example:
 
     var hashdir = require('hashsome/hashdir');
     hashdir('tests/fixtures/smorgasbord', function(err, results) {
@@ -94,3 +94,4 @@ Results look like:
         }
     }
 
+See `./tests`.
