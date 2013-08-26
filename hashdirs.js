@@ -1,5 +1,6 @@
 var fs = require('fs'),
     path = require('path'),
+    rimraf = require('rimraf'),
     hashdir = require('./hashdir');
 
 
@@ -15,6 +16,16 @@ function prefix(left) {
     return function(right) { return left + right; };
 }
 
+function rename(from, to, cb) {
+    fs.exists(to, function(exists) {
+        if (exists) {
+            // delete destination dir before renaming
+            rimraf(to, function() { fs.rename(from, to, cb); });
+        } else {
+            fs.rename(from, to, cb);
+        }
+    })
+}
 
 /**
  * Call hashdir.js for each directory path in an array.
@@ -37,7 +48,7 @@ function hashdirs(dirs, options, callback) {
     }
 
     if (!options.hasOwnProperty('exec')) {
-        options.exec = fs.rename;
+        options.exec = rename;
     }
 
     function isDone(err) {
