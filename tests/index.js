@@ -5,6 +5,7 @@ var test = require('tap').test,
 test('hash/rename-all: demo (shifter created build dir)', function(t) {
     var name = 'hash/rename-all: demo test',
         blddir = 'tests/fixtures/demo',
+        options = {exec: false}, // skip the renaming
         expected = {
             'alerts-model': 'tests/fixtures/demo/alerts-model@569028',
             'binder-index': 'tests/fixtures/demo/binder-index@eba6ac',
@@ -18,7 +19,7 @@ test('hash/rename-all: demo (shifter created build dir)', function(t) {
     t.plan(2);
     console.time(name);
 
-    hashdirs.buildDir(blddir, function(err, results) {
+    hashdirs.buildDir(blddir, options, function(err, results) {
         console.timeEnd(name);
         t.true(!err);
         t.same(results, expected);
@@ -29,12 +30,12 @@ test('hash/rename-all: demo (shifter created build dir)', function(t) {
 test('hash/rename yui-module dirs provided in an array', function(t) {
     var name = 'hash/rename-dir-array: [smorgasbord]',
         options = {exec: false}, // skip the renaming
-        expected = { 'smorgasbord': 'tests/fixtures/smorgasbord@85be6a' };
+        expected = {'smorgasbord': 'tests/fixtures/smorgasbord@85be6a'};
 
     t.plan(2);
     console.time(name);
 
-    hashdirs(['tests/fixtures/smorgasbord'], function(err, results) {
+    hashdirs(['tests/fixtures/smorgasbord'], options, function(err, results) {
         console.timeEnd(name);
         t.true(!err);
         t.same(results, expected);
