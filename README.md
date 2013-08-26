@@ -32,7 +32,7 @@ Arguments are:
 
 - `dir` string pathname to the build directory, i.e. tests/fixtures/demo
 - `options` optional object with the following properties
-    - `algo` string - default is 'md5'
+    - `algo` string - default is `"md5"`
     - `select` array of string or regex patterns of module pathnames to hash with `algo` - default is `[/-min\.(css|js)$/, /\.(gif|jpe?g|png|swf)$/, /\/lang\/.+\.js$/]`
     - `ignore` - array of string or regex patterns of module pathnames to ignore - default is `[]`
     - `namer` - function for determining a new module directory pathname. Passed module pathname and hash string - default is `function namer(modulePath, hash) { return modulePath + '@' + hash.slice(0, 6); }`
@@ -46,6 +46,7 @@ Same as `hashsome.buildDir` except first argument is an array of module director
 Example:
 
     var hashdirs = require('hashsome');
+
     hashdirs(['tests/fixtures/demo/smorgasbord', 'tests/fixtures/demo/binder-index'], function(err, results) {
         console.log(err || results);
     });
@@ -58,7 +59,7 @@ Arguments are:
 
 - `dir` string pathname to the build directory, i.e. tests/fixtures/demo
 - `options` optional object with the following properties
-    - `algo` string - default is 'md5'
+    - `algo` string - default is `"md5"`
     - `select` array of string or regex patterns of module pathnames to hash with `algo` - default is `[/-min\.(css|js)$/, /\.(gif|jpe?g|png|swf)$/, /\/lang\/.+\.js$/]`
     - `ignore` - array of string or regex patterns of module pathnames to ignore - default is `[]`
 - `callback` - function - callback gets two arguments, `err`, `results`.
@@ -66,6 +67,7 @@ Arguments are:
 Example:
 
     var hashdir = require('hashsome/hashdir');
+
     hashdir('tests/fixtures/smorgasbord', function(err, results) {
         console.log(err || results);
     });

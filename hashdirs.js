@@ -5,15 +5,15 @@ var fs = require('fs'),
 
 
 function namer(modulePath, hash) {
-    return modulePath + '@' + hash.slice(0, 6); // new module directory name
+    return modulePath + '@' + hash.slice(0, 6); // new directory name
 }
 
 function namefilter(item) {
-    return (/^[\w\-]+$/).test(item); // match YUI module directory names
+    return (/^[\w\-]+$/).test(item); // match source directory names
 }
 
 function prefix(left) {
-    return function(right) { return left + right; };
+    return function(right) { return left + right; }; // use with Array.map
 }
 
 function rename(from, to, cb) {
