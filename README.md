@@ -4,13 +4,14 @@ Get a hash (md5, sha, etc.) for files matching a pattern in a directory, or for 
 
 ## hashsome.buildDir(dir, [options], callback)
 
-For a Shifter build directory path, calculate the hash of each YUI module, and rename the module directory accoringly.
+For a Shifter build directory path, calculate the hash of each YUI module, and rename the module directory accordingly.
 
 Example:
 
-    var hashdirs = require('hashsome')
-    hashdirs.buildDir('tests/fixtures/demo', function(err, results) {
-        console.log(results);
+    var hashBuildDir = require('hashsome').buildDir;
+
+    hashBuildDir('tests/fixtures/demo', function(err, results) {
+        console.log(err || results);
     });
 
 Build sub-directories (module directories) are renamed on the filesystem (by default, as in this example). Results look like:
@@ -25,38 +26,38 @@ Build sub-directories (module directories) are renamed on the filesystem (by def
         'smorgasbord' : 'tests/fixtures/demo/smorgasbord@85be6a'
     }
 
-If the supplied pathnames are relative, the output paths are relative (vis a vis process.cwd()).
+If the supplied pathnames are relative to `process.cwd()`, the output paths are relative too.
 
 Arguments are:
 
 - `dir` string pathname to the build directory, i.e. tests/fixtures/demo
-- `options` optional
+- `options` optional object with the following properties
     - `algo` string - default is 'md5'
     - `select` array of string or regex patterns of module pathnames to hash with `algo` - default is `[/-min\.(css|js)$/, /\.(gif|jpe?g|png|swf)$/, /\/lang\/.+\.js$/]`
     - `ignore` - array of string or regex patterns of module pathnames to ignore - default is `[]`
     - `namer` - function for determining a new module directory pathname. Passed module pathname and hash string - default is `function namer(modulePath, hash) { return modulePath + '@' + hash.slice(0, 6); }`
-    - `exec` - function for renaming the module directory - default is `fs.rename`.
+    - `exec` - function for renaming the module directory, function signature is same as `fs.rename` - default is a function that deletes the destination directory before calling `fs.rename`.
 - `callback` - function - callback gets two arguments, `err`, `results`.
 
 ## hashsome(dirs, [options], callback)
 
-Same as `hashdirs.buildDir` except first argument is an array of module directories. Each array item will get renamed with a hash.
+Same as `hashsome.buildDir` except first argument is an array of module directories. Each array item will get renamed with a hash.
 
 Example:
 
-    var hashsome = require('hashsome');
-    hashsome(['tests/fixtures/demo/smorgasbord', 'tests/fixtures/demo/binder-index'], function(err, results) {
-        console.log(results);
+    var hashdirs = require('hashsome');
+    hashdirs(['tests/fixtures/demo/smorgasbord', 'tests/fixtures/demo/binder-index'], function(err, results) {
+        console.log(err || results);
     });
 
 ## hashdir(dir, options, callback)
 
-Get the hash of some files in `dir`. No side-effects, used by `hashdirs`.
+Get the hash of some files in `dir`. There are no file-system side-effects. It used by `hashdirs`.
 
 Arguments are:
 
 - `dir` string pathname to the build directory, i.e. tests/fixtures/demo
-- `options` optional
+- `options` optional object with the following properties
     - `algo` string - default is 'md5'
     - `select` array of string or regex patterns of module pathnames to hash with `algo` - default is `[/-min\.(css|js)$/, /\.(gif|jpe?g|png|swf)$/, /\/lang\/.+\.js$/]`
     - `ignore` - array of string or regex patterns of module pathnames to ignore - default is `[]`
@@ -66,7 +67,7 @@ Example:
 
     var hashdir = require('hashsome/hashdir');
     hashdir('tests/fixtures/smorgasbord', function(err, results) {
-        console.log(results);
+        console.log(err || results);
     });
 
 Results look like:
