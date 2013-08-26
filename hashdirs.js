@@ -49,7 +49,7 @@ function hashdirs(dirs, options, callback) {
     function afterHash(err, result) {
         var moddir = result.dir,
             modname = path.basename(moddir),
-            newdir = namer(result.dir, result.hash);
+            newdir = options.namer(result.dir, result.hash);
 
         // save
         results[modname] = newdir;
