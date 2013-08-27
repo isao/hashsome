@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2013, Yahoo! Inc.  All rights reserved.
+ * Copyrights licensed under the New BSD License.
+ * See the accompanying LICENSE file for terms.
+ */
+
 // given a directory path, and some pathname matching patterns, calculate a
 // checksum for all matched files (actually, a checksum of the checksums of
 // every matched file).

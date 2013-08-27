@@ -1,6 +1,6 @@
 # readme
 
-Get a hash (md5, sha, etc.) for files matching a pattern in a directory, or for each of a group of directories.
+A library to get a cryptographic hash (md5, sha, etc.) of some files in a directory, or hashes for each of a group of directories. Directories with hashes can get renamed on the filesystem.
 
 ## hashsome(dirs, [options], callback)
 
@@ -114,4 +114,12 @@ Results look like:
         }
     }
 
-See `./tests`.
+See also `./tests`.
+
+## license
+
+This software is free to use under the Yahoo! Inc. BSD license.
+See the [LICENSE file][] for license text and copyright information.
+
+[LICENSE file]: https://github.com/isao/hashsome/blob/master/LICENSE.txt
+
