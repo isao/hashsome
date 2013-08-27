@@ -2,9 +2,51 @@
 
 Get a hash (md5, sha, etc.) for files matching a pattern in a directory, or for each of a group of directories.
 
+## hashsome(dirs, [options], callback)
+
+Given an array of directory pathnames, get the hash of all files matching a set of patterns in each directory. Each directory can then be renamed with that hash.
+
+Arguments and options are:
+
+- `dirs` array of string pathnames of directories to hash and possibly rename.
+- `options` optional object with the following properties
+    - `algo` string - default is `"md5"`. For other valid values see `crypto.getHashes()`.
+    - `select` array of string or regex patterns of file/pathnames to hash with `algo` - default is `[/-min\.(css|js)$/, /\.(gif|jpe?g|png|swf)$/, /\/lang\/.+\.js$/]`
+    - `ignore` - array of string or regex patterns of pathnames to ignore - default is `[]`
+    - `namer` - function for determining a new module directory pathname. Return value is the renamed directory path. Parameters are the original directory path and hash string - default is `function namer(pathname, hash) { return pathname + '@' + hash.slice(0, 6); }`
+    - `exec` - function for renaming the module directory, function signature is same as `fs.rename` - default is an internal function that deletes the destination directory if it exists before calling `fs.rename`.
+- `callback` - function that is called with two arguments, `err`, `results`.
+
+Example:
+
+    var hashdirs = require('hashsome'),
+        dirs = [
+            'tests/fixtures/demo/smorgasbord',
+            'tests/fixtures/demo/binder-index',
+            'tests/fixtures/demo/demo-templates-index'
+        ];
+
+    hashdirs(dirs, function(err, results) {
+        console.log(err || results);
+    });
+
+Results look like:
+
+    {
+        'binder-index': 'tests/fixtures/demo/binder-index@eba6ac',
+        'demo-templates-index': 'tests/fixtures/demo/demo-templates-index@145385',
+        'smorgasbord': 'tests/fixtures/demo/smorgasbord@85be6a'
+    }
+
+If the supplied pathnames in `dirs` are relative to `process.cwd()`, the output paths are relative too. The order of the results are not the necessarily the same as the input array order.
+
+By default, the directories in `dirs` are renamed with their hash, as described by the callback results. This can be disabled by setting options.exec to `false`.
+
 ## hashsome.buildDir(dir, [options], callback)
 
-For a Shifter build directory path, calculate the hash of each YUI module, and rename the module directory accordingly.
+Same as `hashsome` except first argument is a single (build) directory pathname. Each subdirectory within this build directory (matching `/^[\w\-]+$/`, i.e. a YUI module name) will become an argument to `hashsome` above, and get files within them hashed in the same manner. Each subdirectory can then be renamed with that hash.
+
+Arguments and options are identical to `hashsome` above.
 
 Example:
 
@@ -14,7 +56,7 @@ Example:
         console.log(err || results);
     });
 
-Build sub-directories (module directories) are renamed on the filesystem (by default, as in this example). Results look like:
+Results look like:
 
     {
         'alerts-model': 'tests/fixtures/demo/alerts-model@569028',
@@ -23,45 +65,20 @@ Build sub-directories (module directories) are renamed on the filesystem (by def
         'demo-templates-index': 'tests/fixtures/demo/demo-templates-index@145385',
         'demo-templates-foo': 'tests/fixtures/demo/demo-templates-foo@539f25',
         'loader-demo': 'tests/fixtures/demo/loader-demo@c3c4ff',
-        'smorgasbord' : 'tests/fixtures/demo/smorgasbord@85be6a'
+        'smorgasbord': 'tests/fixtures/demo/smorgasbord@85be6a'
     }
-
-If the supplied pathnames are relative to `process.cwd()`, the output paths are relative too.
-
-Arguments are:
-
-- `dir` string pathname to the build directory, i.e. tests/fixtures/demo
-- `options` optional object with the following properties
-    - `algo` string - default is `"md5"`
-    - `select` array of string or regex patterns of module pathnames to hash with `algo` - default is `[/-min\.(css|js)$/, /\.(gif|jpe?g|png|swf)$/, /\/lang\/.+\.js$/]`
-    - `ignore` - array of string or regex patterns of module pathnames to ignore - default is `[]`
-    - `namer` - function for determining a new module directory pathname. Passed module pathname and hash string - default is `function namer(modulePath, hash) { return modulePath + '@' + hash.slice(0, 6); }`
-    - `exec` - function for renaming the module directory, function signature is same as `fs.rename` - default is a function that deletes the destination directory before calling `fs.rename`.
-- `callback` - function - callback gets two arguments, `err`, `results`.
-
-## hashsome(dirs, [options], callback)
-
-Same as `hashsome.buildDir` except first argument is an array of module directories. Each array item will get renamed with a hash.
-
-Example:
-
-    var hashdirs = require('hashsome');
-
-    hashdirs(['tests/fixtures/demo/smorgasbord', 'tests/fixtures/demo/binder-index'], function(err, results) {
-        console.log(err || results);
-    });
 
 ## hashdir(dir, options, callback)
 
-Get the hash of some files in `dir`. There are no file-system side-effects. It used by `hashdirs`.
+Get the hash of some files in `dir`. Invoking this function does not rename anything.
 
 Arguments are:
 
 - `dir` string pathname to the build directory, i.e. tests/fixtures/demo
 - `options` optional object with the following properties
-    - `algo` string - default is `"md5"`
-    - `select` array of string or regex patterns of module pathnames to hash with `algo` - default is `[/-min\.(css|js)$/, /\.(gif|jpe?g|png|swf)$/, /\/lang\/.+\.js$/]`
-    - `ignore` - array of string or regex patterns of module pathnames to ignore - default is `[]`
+    - `algo` string - default is `"md5"`. For other valid values see `crypto.getHashes()`.
+    - `select` array of string or regex patterns of file/pathnames to hash with `algo` - default is `[/-min\.(css|js)$/, /\.(gif|jpe?g|png|swf)$/, /\/lang\/.+\.js$/]`
+    - `ignore` - array of string or regex patterns of pathnames to ignore - default is `[]`
 - `callback` - function - callback gets two arguments, `err`, `results`.
 
 Example:
