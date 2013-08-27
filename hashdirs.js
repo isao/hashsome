@@ -30,7 +30,7 @@ function rename(from, to, cb) {
         } else {
             fs.rename(from, to, cb);
         }
-    })
+    });
 }
 
 /**

@@ -8,8 +8,7 @@
 // checksum for all matched files (actually, a checksum of the checksums of
 // every matched file).
 
-var fs = require('fs'),
-    crypto = require('crypto'),
+var crypto = require('crypto'),
     Scanfs = require('scanfs'),
     hashfile = require('./hashfile');
 
@@ -64,6 +63,7 @@ function hashdir(dir, opts, cb) {
     }
 
     function onFile(err, pathname, stat) {
+        /*jshint unused: vars*/
         if (opts.select.some(match(pathname))) {
             count++;
             hashfile(pathname, opts.algo, afterHash);
