@@ -7,7 +7,8 @@
     "lint": "jshint *.js*",
     "clean": "git clean -dfx tests/fixtures; git checkout -- tests/fixtures",
     "pretest": "npm run clean",
-    "test": "node tests"
+    "test": "node tests",
+    "cover": "npm run clean; istanbul cover --dir artifacts/coverage tests"
   },
   "author": "Isao Yagi <isao@yahoo-inc.com>",
   "license": "BSD",
