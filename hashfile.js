@@ -7,17 +7,6 @@
 var fs = require('fs'),
     crypto = require('crypto');
 
-
-function tryNewStream(pathname) {
-    var stream;
-    try {
-        stream = fs.ReadStream(pathname);
-    } catch(err) {
-        stream = err;
-    }
-    return stream;
-}
-
 /**
  * get a checksum/hash of the contents of a file
  * @param {string} file Full path to a readable file
@@ -29,13 +18,8 @@ function tryNewStream(pathname) {
  *      // null '/path/to/hashfile.js' '02934b97a9ed5639f5f6d733e698065e'
  */
 function hashfile(pathname, algo, callback) {
-    var stream = tryNewStream(pathname),
-        hash = crypto.createHash(algo);
-
-    if (stream instanceof Error) {
-        callback(stream);
-        return;
-    }
+    var hash = crypto.createHash(algo),
+        stream = fs.createReadStream(pathname);
 
     stream.on('error', callback);
 
