@@ -109,6 +109,9 @@ function hashbuild(blddir, options, callback) {
     });
 }
 
-module.exports = hashdirs;
-module.exports.buildDir = buildDir;
-
+module.exports = {
+    hashdirs: hashdirs,
+    hashbuild: hashbuild,
+    hashfile: hashdir.hashfile,
+    forceRename: forceRename
+};
