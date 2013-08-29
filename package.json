@@ -2,7 +2,7 @@
   "name": "hashsome",
   "version": "0.0.1",
   "description": "Get a crypto hash (md5, sha, etc.) for a file, or some files matching a pattern in a directory, or a group of directories.",
-  "main": "hashdirs.js",
+  "main": "hashsome.js",
   "scripts": {
     "lint": "jshint *.js*",
     "clean": "git clean -dfx tests/fixtures; git checkout -- tests/fixtures",

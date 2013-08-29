@@ -7,7 +7,7 @@
 var fs = require('fs'),
     path = require('path'),
     rimraf = require('rimraf'),
-    hashdir = require('./hashdir');
+    hashdir = require('./lib/hashdir');
 
 
 function namer(modulePath, hash) {
@@ -15,14 +15,14 @@ function namer(modulePath, hash) {
 }
 
 function namefilter(item) {
-    return (/^[\w\-]+$/).test(item); // match source directory names
+    return (/^[\w\-]+$/).test(item); // match directory names for hashbuild()
 }
 
 function prefix(left) {
     return function(right) { return left + right; }; // use with Array.map
 }
 
-function rename(from, to, cb) {
+function forceRename(from, to, cb) {
     fs.exists(to, function(exists) {
         if (exists) {
             // delete destination dir before renaming
@@ -54,7 +54,7 @@ function hashdirs(dirs, options, callback) {
     }
 
     if (!options.hasOwnProperty('exec')) {
-        options.exec = rename;
+        options.exec = forceRename;
     }
 
     function isDone(err) {
@@ -92,7 +92,7 @@ function hashdirs(dirs, options, callback) {
  * @param {function} callback Callback
  * @see ./hashdir.js
  */
-function buildDir(blddir, options, callback) {
+function hashbuild(blddir, options, callback) {
     if (!callback) {
         callback = options;
         options = {};

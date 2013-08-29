@@ -2,7 +2,7 @@
 
 A library to get a cryptographic hash (md5, sha, etc.) of some files in a directory, or hashes for each of a group of directories. Directories with hashes can get renamed on the filesystem.
 
-## hashsome(dirs, [options], callback)
+## hashsome.hashdirs(dirs, [options], callback)
 
 Given an array of directory pathnames, get the hash of all files matching a set of patterns in each directory. Each directory can then be renamed with that hash.
 
@@ -14,7 +14,7 @@ Arguments and options are:
     - `select` array of string or regex patterns of file/pathnames to hash with `algo` - default is `[/-min\.(css|js)$/, /\.(gif|jpe?g|png|swf)$/, /\/lang\/.+\.js$/]`
     - `ignore` - array of string or regex patterns of pathnames to ignore - default is `[]`
     - `namer` - function for determining a new module directory pathname. Return value is the renamed directory path. Parameters are the original directory path and hash string - default is `function namer(pathname, hash) { return pathname + '@' + hash.slice(0, 6); }`
-    - `exec` - function for renaming the module directory, function signature is same as `fs.rename` - default is an internal function that deletes the destination directory if it exists before calling `fs.rename`.
+    - `exec` - function for renaming the module directory, or false to not rename anything. Function signature is same as `fs.rename`. The default is an internal function that deletes the destination directory if it exists before calling `fs.rename`.
 - `callback` - function that is called with two arguments, `err`, `results`.
 
 Example:
@@ -42,7 +42,7 @@ If the supplied pathnames in `dirs` are relative to `process.cwd()`, the output 
 
 By default, the directories in `dirs` are renamed with their hash, as described by the callback results. This can be disabled by setting options.exec to `false`.
 
-## hashsome.buildDir(dir, [options], callback)
+## hashsome.hashbuild(dir, [options], callback)
 
 Same as `hashsome` except first argument is a single (build) directory pathname. Each subdirectory within this build directory (matching `/^[\w\-]+$/`, i.e. a YUI module name) will become an argument to `hashsome` above, and get files within them hashed in the same manner. Each subdirectory can then be renamed with that hash.
 

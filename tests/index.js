@@ -1,9 +1,8 @@
 var test = require('tap').test,
-    hashdirs = require('../hashdirs'),
-    hashfile = require('../hashfile');
+    hashsome = require('../hashsome');
 
 
-test('hashdirs.buildDir demo (shifter created build dir)', function(t) {
+test('hashsome.hashbuild demo (shifter created build dir)', function(t) {
     var name = 'hash/rename-all: demo test',
         blddir = 'tests/fixtures/demo',
         options = {exec: false}, // skip the renaming
@@ -20,7 +19,7 @@ test('hashdirs.buildDir demo (shifter created build dir)', function(t) {
     t.plan(2);
     console.time(name);
 
-    hashdirs.buildDir(blddir, options, function(err, results) {
+    hashsome.hashbuild(blddir, options, function(err, results) {
         console.timeEnd(name);
         t.true(!err);
         t.same(results, expected);
@@ -28,7 +27,7 @@ test('hashdirs.buildDir demo (shifter created build dir)', function(t) {
 });
 
 
-test('hashdirs smorgasbord (SIDE EFFECTS)', function(t) {
+test('hashsome.hashdirs smorgasbord (SIDE EFFECTS)', function(t) {
     var name = 'hash/rename-dir-array: [smorgasbord]',
         //options = {exec: false}, // skip the renaming
         expected = {'smorgasbord': 'tests/fixtures/smorgasbord@85be6a'};
@@ -36,17 +35,17 @@ test('hashdirs smorgasbord (SIDE EFFECTS)', function(t) {
     t.plan(2);
     console.time(name);
 
-    hashdirs(['tests/fixtures/smorgasbord'], /*options,*/ function(err, results) {
+    hashsome.hashdirs(['tests/fixtures/smorgasbord'], /*options,*/ function(err, results) {
         console.timeEnd(name);
-        t.true(!err);
-        t.same(results, expected);
+        t.true(!err, 'no errors');
+        t.same(results, expected, 'fixtures/smorgasbord -> fixtures/smorgasbord@85be6a (use `npm run clean` to cleanup)');
     });
 });
 
 
 test('readfile error', function(t) {
     t.plan(2);
-    hashfile('nonesuch', 'sha256', function (err, results) {
+    hashsome.hashfile('nonesuch', 'sha256', function (err, results) {
     	t.true(err instanceof Error);
     	t.same(err.code, 'ENOENT');
     });
