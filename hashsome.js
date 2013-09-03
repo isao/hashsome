@@ -3,6 +3,7 @@
  * Copyrights licensed under the New BSD License.
  * See the accompanying LICENSE file for terms.
  */
+'use strict';
 
 var fs = require('fs'),
     path = require('path'),
@@ -68,13 +69,17 @@ function hashdirs(dirs, options, callback) {
             modname = path.basename(moddir),
             newdir = options.namer(result.dir, result.hash);
 
-        // save
-        results[modname] = newdir;
+        if (!err) {
+            // save result
+            results[modname] = newdir;
+        }
 
-        // rename
         if (!err && options.exec) {
+            // rename
             options.exec(moddir, newdir, isDone);
+
         } else {
+            // done yet?
             isDone(err);
         }
     }
