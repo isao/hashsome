@@ -54,8 +54,8 @@ function hashdirs(dirs, options, callback) {
         options.namer = namer;
     }
 
-    if (!options.hasOwnProperty('exec')) {
-        options.exec = forceRename;
+    if (!options.hasOwnProperty('exec')) {  // falsey value skips exec
+        options.exec = forceRename;         // default is to forceRename
     }
 
     function isDone(err) {
